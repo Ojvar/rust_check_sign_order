@@ -40,24 +40,16 @@ fn check_order(input_str: &str) -> bool {
     let signs = HashMap::from([(')', '('), (']', '['), ('}', '{')]);
 
     for c in input_str.chars() {
-        let counter_part_sign = signs.get(&c);
-        match counter_part_sign {
-            None => stack.push(c),
-            Some(t) => match stack.pop() {
-                None => return false,
-                Some(ts) => {
-                    if ts != *t {
-                        return false;
-                    }
-                }
-            },
+        if let Some(&open_bracket) = signs.get(&c) {
+            match stack.pop() {
+                Some(top) if top == open_bracket => (),
+                _ => return false,
+            }
+        } else {
+            stack.push(c);
         }
     }
-    if !stack.is_empty() {
-        return false;
-    }
-
-    true
+    stack.is_empty()
 }
 
 fn main() {
